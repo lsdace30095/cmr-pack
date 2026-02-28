@@ -1,0 +1,64 @@
+name: CI/CD to AKS
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  AZURE_CONTAINER_REGISTRY: yourregistry.azurecr.io
+  PROJECT_NAME: stp-app
+  RESOURCE_GROUP: your-resource-group
+  CLUSTER_NAME: your-aks-cluster
+  NAMESPACE: default
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    
+    - name: Log in to Azure Container Registry
+      uses: azure/docker-login@v1
+      with:
+        login-server: ${{ env.AZURE_CONTAINER_REGISTRY }}
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
+    
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        push: true
+        tags: |
+          ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.PROJECT_NAME }}:${{ github.sha }}
+          ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.PROJECT_NAME }}:latest
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+    
+    - name: Set up kubectl
+      uses: azure/setup-kubectl@v3
+    
+    - name: Set AKS context
+      uses: azure/aks-set-context@v3
+      with:
+        resource-group: ${{ env.RESOURCE_GROUP }}
+        cluster-name: ${{ env.CLUSTER_NAME }}
+    
+    - name: Deploy to AKS
+      run: |
+        # Update the image in the deployment
+        sed -i "s|image:.*|image: ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.PROJECT_NAME }}:${{ github.sha }}|g" deployment.yaml
+        
+        # Apply Kubernetes manifests
+        kubectl apply -f configmap.yaml -n ${{ env.NAMESPACE }}
+        kubectl apply -f deployment.yaml -n ${{ env.NAMESPACE }}
+        kubectl apply -f service.yaml -n ${{ env.NAMESPACE }}
+        
+        # Wait for rollout
+        kubectl rollout status deployment/stp-deployment -n ${{ env.NAMESPACE }}

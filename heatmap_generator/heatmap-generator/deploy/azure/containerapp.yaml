@@ -1,0 +1,23 @@
+name: heatmap-generator
+type: containerapp
+location: eastus
+properties:
+  environmentId: <YOUR_CONTAINERAPPS_ENV_ID>
+  configuration:
+    ingress:
+      external: true
+      targetPort: 8000
+    registries:
+      - server: <YOUR_ACR_SERVER>
+        username: <YOUR_ACR_USERNAME>
+        passwordSecretRef: acr-password
+  template:
+    containers:
+      - name: heatmap-app
+        image: <YOUR_ACR_SERVER>/heatmap-generator:latest
+        resources:
+          cpu: 1.0
+          memory: 2.0Gi
+        env:
+          - name: FLOW_MODEL_PATH
+            value: "/models/raft-lite.onnx"

@@ -1,0 +1,7 @@
+name: stp-app
+location: eastus
+resourceGroup: stp-rg
+sku: P1V2
+scale:
+  minCapacity: 1
+  maxCapacity: 5

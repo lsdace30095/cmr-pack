@@ -1,0 +1,40 @@
+# Web Framework
+Django>=4.2
+gunicorn>=21.2
+
+# REST / API
+djangorestframework>=3.14
+
+# Data Processing
+pandas>=2.0
+numpy>=1.24
+scikit-learn>=1.3
+scipy>=1.11
+
+# Geospatial
+geopandas>=0.14
+shapely>=2.0
+pyproj>=3.6
+
+# Visualization
+matplotlib>=3.8
+seaborn>=0.13
+
+# Azure Integration
+azure-identity>=1.15
+azure-storage-blob>=12.19
+azure-ai-anomalydetector>=3.0.0b6
+azure-maps-search>=1.0.0b2
+
+# Database
+psycopg2-binary>=2.9
+
+# Async / Realtime
+channels>=4.0
+daphne>=4.0
+
+# Environment
+python-dotenv>=1.0
+
+# Utilities
+requests>=2.31

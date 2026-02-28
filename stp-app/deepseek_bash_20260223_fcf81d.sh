@@ -1,0 +1,49 @@
+# Create the deployment
+cat <<EOF | kubectl apply -f -
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stp-deployment
+  namespace: default
+  labels:
+    app: stp-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: stp-app
+  template:
+    metadata:
+      labels:
+        app: stp-app
+    spec:
+      containers:
+      - name: stp-container
+        image: stpcontainerregistry2026.azurecr.io/stp-app:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        env:
+        - name: ENVIRONMENT
+          value: "production"
+      restartPolicy: Always
+EOF

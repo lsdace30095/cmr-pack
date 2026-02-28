@@ -1,0 +1,19 @@
+your-project/
+├── main.py
+├── core_pla_2049_engine/
+│   ├── __init__.py
+│   ├── optical_flow_adapters/
+│   │   ├── __init__.py
+│   │   └── farneback_adapter.py
+│   ├── vector_processing/
+│   │   ├── __init__.py
+│   │   ├── vector_field.py
+│   │   ├── vector_cleaner.py
+│   │   └── vector_aggregator.py
+│   └── coherent_regions/
+│       ├── __init__.py
+│       ├── region_builder.py
+│       ├── region_cluster.py
+│       └── graph_analyzer.py
+├── requirements.txt
+└── Dockerfile
