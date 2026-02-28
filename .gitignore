@@ -43,3 +43,14 @@ models/data/
 
 # Docker
 *.pid
+
+# Secret files
+*.secret.txt
+*.secret
+.env
+*.key
+*.pem
+*credential*
+*password*
+*secret*
+kubectl create secret.txt
